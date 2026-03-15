@@ -355,8 +355,8 @@ By default Azure-managed keys are used for data-at-rest encryption. Customer-man
 Module was also published via Terraform Registry and can be used as a module from the registry.
 
 ```hcl
-module "example" {
-  source  = "wanted-cloud/..."
+module "postgresql_server" {
+  source  = "wanted-cloud/postgresql-server/azure"
   version = "x.y.z"
 }
 ```
