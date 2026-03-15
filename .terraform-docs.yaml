@@ -12,6 +12,7 @@ content: |-
   - [Variables](#inputs)
   - [Outputs](#outputs)
   - [Resources](#resources)
+  - [Security Considerations](#security-considerations)
   - [Usage](#usage)
   - [Contributing](#contributing)
 
@@ -24,6 +25,30 @@ content: |-
   {{ .Outputs }}
 
   {{ .Resources }}
+
+  ## Security Considerations
+
+  Review the following defaults before deploying to production. The module ships with permissive defaults to minimise friction in dev/test environments — tighten these for any internet-facing or regulated workload.
+
+  ### Public Network Access (Medium)
+
+  `public_network_access_enabled` defaults to `true`, which exposes the server endpoint to the internet. For production deployments set `public_network_access_enabled = false` and supply `var.network` with a delegated subnet and private DNS zone to enforce private-only connectivity.
+
+  ### Authentication (Medium)
+
+  The default configuration enables password-only authentication (`authentication.password_auth_enabled = true`, `active_directory_auth_enabled = false`). For production workloads configure `active_directory_auth_enabled = true` and set `tenant_id` to your Entra ID tenant. Consider disabling `password_auth_enabled` entirely once all clients support Azure AD tokens.
+
+  ### Backup (Medium)
+
+  `backup.geo_redundant_enabled` defaults to `false` — backup data is stored in a single region only. Enable for production workloads that require geographic redundancy. `backup.retention_days` defaults to `7` (the Azure minimum) — production workloads typically require 14–35 days depending on RPO requirements and compliance obligations.
+
+  ### SKU
+
+  The default `sku_name = "B_Standard_B1ms"` is a Burstable tier intended for dev/test workloads only. Production workloads require at minimum a General Purpose tier (`GP_Standard_D*`) for consistent CPU performance, or Memory Optimised (`MO_Standard_E*`) for memory-intensive workloads.
+
+  ### Encryption
+
+  By default Azure-managed keys are used for data-at-rest encryption. Customer-managed keys (CMK) can be configured via `var.customer_managed_key` — this requires a `UserAssigned` managed identity assigned via `var.identity`. CMK is recommended for workloads with strict data sovereignty or compliance requirements (e.g. PCI-DSS, HIPAA).
 
   ## Usage
   
