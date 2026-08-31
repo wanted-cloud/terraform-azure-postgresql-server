@@ -168,3 +168,9 @@ variable "databases" {
   }))
   default = {}
 }
+
+variable "extensions" {
+  description = "Comma-separated azure.extensions allowlist (e.g. \"POSTGIS,UNACCENT\"). CREATE EXTENSION on the server is gated on this per-server allowlist. Empty (default) leaves the server default and manages no configuration. Dynamic parameter — no server restart."
+  type        = string
+  default     = ""
+}

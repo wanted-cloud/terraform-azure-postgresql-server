@@ -112,3 +112,21 @@ resource "azurerm_postgresql_flexible_server_database" "this" {
     delete = try(local.metadata.resource_timeouts["azurerm_postgresql_flexible_server_database"]["delete"], local.metadata.resource_timeouts["default"]["delete"])
   }
 }
+
+# azure.extensions ALLOWLIST — CREATE EXTENSION on the server is gated on this list. Created
+# only when a non-empty value is supplied; empty (the default) leaves the server default and
+# manages no configuration. Dynamic parameter — no server restart.
+resource "azurerm_postgresql_flexible_server_configuration" "extensions" {
+  count = var.extensions != "" ? 1 : 0
+
+  name      = "azure.extensions"
+  server_id = azurerm_postgresql_flexible_server.this.id
+  value     = var.extensions
+
+  timeouts {
+    create = try(local.metadata.resource_timeouts["azurerm_postgresql_flexible_server_configuration"]["create"], local.metadata.resource_timeouts["default"]["create"])
+    read   = try(local.metadata.resource_timeouts["azurerm_postgresql_flexible_server_configuration"]["read"], local.metadata.resource_timeouts["default"]["read"])
+    update = try(local.metadata.resource_timeouts["azurerm_postgresql_flexible_server_configuration"]["update"], local.metadata.resource_timeouts["default"]["update"])
+    delete = try(local.metadata.resource_timeouts["azurerm_postgresql_flexible_server_configuration"]["delete"], local.metadata.resource_timeouts["default"]["delete"])
+  }
+}
