@@ -174,3 +174,14 @@ variable "extensions" {
   type        = string
   default     = ""
 }
+
+variable "max_connections" {
+  description = "Server max_connections (Azure range 25-5000). Null (default) leaves the server default and manages no configuration. Azure computes that default from the SKU at provisioning only and does not recompute it on a rescale, so set this from the SKU table after changing sku_name. Static parameter — a change restarts the server. Going from a value back to null deletes the configuration, which resets the server to that provisioning-time default (and restarts it)."
+  type        = number
+  default     = null
+
+  validation {
+    condition     = var.max_connections == null ? true : (var.max_connections >= 25 && var.max_connections <= 5000 && floor(var.max_connections) == var.max_connections)
+    error_message = "max_connections must be null or a whole number between 25 and 5000."
+  }
+}
