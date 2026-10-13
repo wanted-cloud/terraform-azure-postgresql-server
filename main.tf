@@ -130,3 +130,22 @@ resource "azurerm_postgresql_flexible_server_configuration" "extensions" {
     delete = try(local.metadata.resource_timeouts["azurerm_postgresql_flexible_server_configuration"]["delete"], local.metadata.resource_timeouts["default"]["delete"])
   }
 }
+
+# max_connections — created only when a value is supplied; null (the default) leaves the server
+# default and manages no configuration. Azure fixes that default at provisioning and does NOT
+# recompute it when sku_name changes, so set it explicitly after a rescale. Static parameter —
+# applying a change restarts the server (azurerm restart_server_on_configuration_value_change).
+resource "azurerm_postgresql_flexible_server_configuration" "max_connections" {
+  count = var.max_connections != null ? 1 : 0
+
+  name      = "max_connections"
+  server_id = azurerm_postgresql_flexible_server.this.id
+  value     = tostring(var.max_connections)
+
+  timeouts {
+    create = try(local.metadata.resource_timeouts["azurerm_postgresql_flexible_server_configuration"]["create"], local.metadata.resource_timeouts["default"]["create"])
+    read   = try(local.metadata.resource_timeouts["azurerm_postgresql_flexible_server_configuration"]["read"], local.metadata.resource_timeouts["default"]["read"])
+    update = try(local.metadata.resource_timeouts["azurerm_postgresql_flexible_server_configuration"]["update"], local.metadata.resource_timeouts["default"]["update"])
+    delete = try(local.metadata.resource_timeouts["azurerm_postgresql_flexible_server_configuration"]["delete"], local.metadata.resource_timeouts["default"]["delete"])
+  }
+}
